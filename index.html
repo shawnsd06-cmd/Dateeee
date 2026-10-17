@@ -156,7 +156,8 @@ You deserve to be treated sweetly, and I’m so excited to spend that time with 
   email: "shawnsd06@gmail.com",                    // your email: her answers are sent here automatically
   phone: "",                    // optional backup: your number, e.g. "+639171234567"
   formEndpoint: "",             // optional: your own form link (overrides the email above)
-  sendPrompt: "I couldn’t send it automatically 🥺 Please tap one so I can see your answers 💌"
+  sendPrompt: "I couldn’t send it automatically 🥺 Please tap one so I can see your answers 💌",
+  showBackupButtons: false      // true = if sending fails, show buttons so she can send it herself
 };
 </script>
 
@@ -325,12 +326,20 @@ $('#done').onclick=async()=>{
     if(navigator.share)add('Share it 💌',()=>navigator.share({text:msg}).catch(()=>{}));
     add('Copy my answers 📋',async()=>{try{await navigator.clipboard.writeText(msg);S.textContent='Copied! Now paste it to him 💗'}catch(e){S.textContent='Please copy it from the card above.'}})};
   show('s3');boom(50);setTimeout(()=>boom(30),1800);
-  if(!ep){fallback();return}
-  S.textContent='Sending your answers to him… 💌';
-  try{const r=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_subject:'💗 '+C.herName+' said YES! Date answers',_captcha:'false',name:C.herName,message:msg})});
-    const j=await r.json().catch(()=>({}));
-    if(r.ok&&j.success!=='false'&&j.success!==false){S.textContent='Your answers were sent to him ✓ 💗';return}}catch(e){}
-  S.textContent='';fallback();
+  if(!ep){S.textContent='';if(C.showBackupButtons)fallback();return}
+  /* what gets emailed to you, as a neat table */
+  const data={_subject:'💗 '+C.herName+' said YES! Date answers',_captcha:'false',_template:'table',Name:C.herName,Date:dayStr(),Time:time};
+  C.questions.forEach(q=>{const a=ans[q.id],v=[...a.sel,a.text].filter(Boolean).join(', ');if(v)data[q.label.replace(/\p{Extended_Pictographic}/gu,'').trim()]=v});
+  S.textContent='Sending your answers to '+C.hisName+'… 💌';
+  let ok=false,failed=false;
+  try{const r=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});
+    const j=await r.json().catch(()=>({}));ok=r.ok&&j.success!=='false'&&j.success!==false}catch(e){failed=true}
+  if(failed&&C.email){ /* second route if the first could not connect: a plain hidden form post */
+    try{const f=document.createElement('form');f.method='POST';f.action='https://formsubmit.co/'+C.email.trim();f.target='fsframe';f.style.display='none';
+      Object.entries(data).forEach(([k,v])=>{const i=document.createElement('input');i.type='hidden';i.name=k;i.value=v;f.appendChild(i)});
+      const fr=document.createElement('iframe');fr.name='fsframe';fr.style.display='none';document.body.append(fr,f);f.submit()}catch(e){}}
+  S.textContent=ok?'Your answers were sent to '+C.hisName+' ✓ 💗':'Your answers are on their way to '+C.hisName+' 💗';
+  if(!ok&&C.showBackupButtons)fallback();
 };
 </script>
 </body>
