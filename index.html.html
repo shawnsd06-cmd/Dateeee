@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A question for you 💗</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+/* ===== COLORS & FONTS: change these to restyle everything ===== */
+--bg1:#fff0f5;--bg2:#ffd9e6;--card:#fffafc;--ink:#5a2a3c;--pink:#f06292;--pink2:#e8749a;--soft:#ffeaf1;--line:#f7c9d8;
+--font-script:'Dancing Script',cursive;--font-body:'Quicksand',system-ui,sans-serif;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100dvh;background:linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed;color:var(--ink);font-family:var(--font-body);font-weight:600;overflow-x:hidden}
+h1,h2{font-family:var(--font-script);font-weight:700;margin:0 0 14px;line-height:1.15;text-align:center}
+h1{font-size:clamp(2.3rem,9vw,3.4rem)}h2{font-size:clamp(1.9rem,7vw,2.6rem)}
+.step{display:none;max-width:560px;margin:0 auto;padding:36px 20px 70px;position:relative;z-index:1;animation:in .7s}
+.step.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(18px)}}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:20px;margin:16px 0;box-shadow:0 8px 22px rgba(240,98,146,.18)}
+.sub{text-align:center;opacity:.8;margin:0 0 18px}
+button{font-family:inherit;font-weight:700;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{background:var(--pink);color:#fff;border:0;border-radius:999px;padding:14px 34px;font-size:1.15rem;box-shadow:0 6px 0 #c2456f;transition:transform .15s,font-size .3s,padding .3s}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #c2456f}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:0 5px 0 var(--line);border:2px solid var(--line)}
+.btns{display:flex;flex-direction:column;align-items:center;gap:20px;margin-top:10px}
+#yes{max-width:100%}
+#no{transition:transform .3s}
+/* bear */
+.bearwrap{display:flex;justify-content:center;margin:6px 0}
+.bearwrap svg,.bearwrap img{width:min(230px,62vw);height:auto;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(1.5deg)}}
+.blink{animation:blink 4s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.heart{animation:beat 1.2s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes beat{50%{transform:scale(1.12)}}
+.sad .happy,.tear{display:none}.sad .tear{display:block}.sad .sadm{display:block}.sadm{display:none}
+/* modal */
+#modal{position:fixed;inset:0;z-index:50;background:rgba(90,42,60,.5);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+.mbox{background:var(--card);border-radius:26px;padding:28px 22px;max-width:420px;text-align:center;border:2px solid var(--line);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.mbox p{line-height:1.6;margin:0 0 18px}
+.mbox .btn{display:block;width:100%;margin-top:12px}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal .wd{font-size:.8rem;opacity:.6;padding-bottom:4px}
+.cal .d{aspect-ratio:1;border-radius:50%;border:0;background:none;font-size:1rem;opacity:.35;cursor:default}
+.cal .d.ok{opacity:1;background:var(--soft);border:2px solid var(--pink2);cursor:pointer;animation:pulse 2s infinite}
+.cal .d.ok small{display:block;font-size:.55rem;margin-top:-2px}
+.cal .d.sel{background:var(--pink);color:#fff;animation:none;transform:scale(1.1)}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(240,98,146,.25)}}
+.cal .d{position:relative}
+.cal .d.ok{animation:none;background:var(--soft);border:2px solid var(--line)}
+.cal .d.sel{background:var(--pink);color:#fff;border-color:var(--pink);transform:scale(1.1)}
+.cal .d.rec{border:2px solid var(--pink);background:#ffd9e6;color:#5a2a3c;animation:pulse 2s infinite;font-weight:700}
+.cal .d.rec.sel{background:var(--pink);color:#fff;animation:none}
+.cal .d.rec::after{content:"💗";position:absolute;top:-7px;right:-4px;font-size:.7rem}
+.cal .d.busy{text-decoration:line-through;opacity:.3}
+.rnote{margin:12px 0 0;padding:12px 14px;border-radius:14px;background:var(--soft);border:2px dashed var(--pink2);text-align:center;font-size:.95rem;line-height:1.5;animation:in .5s}
+.rnote:empty{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{background:var(--soft);border:2px solid var(--line);border-radius:999px;padding:9px 16px;font-size:.95rem}
+.chip.sel{background:var(--pink);color:#fff;border-color:var(--pink)}
+label.q{display:block;font-size:1.05rem;margin-bottom:10px}
+input[type=text],textarea{width:100%;margin-top:10px;border:2px solid var(--line);border-radius:14px;padding:11px 14px;font:inherit;background:var(--card);color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+#more{display:none}#more.on{display:block;animation:in .7s}
+.err{color:#c2185b;text-align:center;min-height:1.4em}
+/* final */
+.letter{background:#fbf0d8;color:#5a3a2a;border-radius:6px;padding:26px 22px;line-height:1.7;box-shadow:0 10px 24px rgba(90,58,68,.3);transform:rotate(-.6deg);font-weight:600}
+.letter h3{font-family:var(--font-script);font-size:2rem;margin:0 0 8px}
+.letter p{margin:0 0 12px}
+.sum{display:grid;gap:8px;font-size:.95rem}.sum b{color:var(--pink2)}
+.fall{position:fixed;top:-30px;z-index:60;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.flr{position:absolute;opacity:.75;transform:rotate(var(--r));animation:sway 6s ease-in-out infinite}
+.flr svg{width:100%;height:100%;overflow:visible}
+@keyframes sway{50%{transform:translateY(-10px) rotate(calc(var(--r) + 8deg))}}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg i{position:absolute;bottom:-40px;font-style:normal;opacity:.5;animation:up linear infinite}
+@keyframes up{to{transform:translateY(-110vh) rotate(30deg)}}
+</style>
+</head>
+<body>
+<script>
+/* =====================================================================
+   EDIT HERE: all the words and settings live in this block
+   ===================================================================== */
+const CONFIG = {
+  herName: "Sai",            // wherever you see {name}
+  hisName: "Shawn",       // your name, used in the letter
+  askTitle: "Hiii, Saiii!!!, will you go out on a date with me?",
+  askSub: "Pretty please? 🥺",
+  yesText: "Yes 💗",
+  noTexts: ["No", "Are you sure?", "Really really sure?", "I’m gonna be sad…", "Pleaseee 🥺", "Last chance… 😢"],
+  gifUrl: "",                   // optional: path to a real GIF, e.g. "cute.gif" (leave empty for the animated bear)
+
+  /* Shown if she clicks the last "No" (after "Last chance…") */
+  declineLetter: {
+    title: "Maybe next time 🌷",
+    greeting: "Dear {name},",
+    message: `Thank you for being honest with me, and for hearing me out. I completely understand, and I accept your answer. Please don’t feel bad at all. I’m really glad I had the courage to ask.
+
+Nothing changes between us, and I’ll still be here, cheering for you, like always.
+
+Maybe I’ll ask again some other time, when the moment feels right and only if you’re comfortable with it. Until then, I hope you have the sweetest days ahead. 🌷`,
+    signoff: "Always rooting for you,",
+    back: "Wait, I changed my mind 💗"
+  },
+
+  reassure: {
+    title: "Before we go on… 🌷",
+    text: "I don’t want you to feel pressured at all. If you’d rather not, that’s completely okay, and nothing changes between us. Only say yes if you really want to. 💗",
+    go: "I really want to 💕",
+    decline: "Actually, I’d rather not",
+    declineText: "Thank you for being honest with me. That’s totally okay, and I’m still glad I asked. Nothing changes between us. 🌷"
+  },
+
+  year: 2026, month: 10,        // month is 0-based: 10 = November
+  blocked: [9, 10, 11, 12, 13],       // days she can’t pick (your exams)
+  recommended: [16, 17, 18],          // highlighted days (the holiday)
+  legend: "💗 Highlighted = my recommended days (holiday!)   ·   Crossed out = I have exams 📚",
+  recommendNote: "Great choice! 💗 Nov 16–18 is a holiday, so neither of us has to rush or worry about school or work. We can take our time, stay out as long as we like, and just enjoy the whole day.",
+  times: ["9am","10am","11am","12noon","1pm","2pm","3pm","4pm","5pm","6pm"],
+  pickTitle: "Yay!! Pick a day 💗",
+  questionsTitle: "Now let’s plan it ✨",
+  questions: [
+    { id:"where", label:"Where should we go? 📍", type:"chips", multi:true, other:"or somewhere else…", options:["Café","Mall","Park / garden","Museum","Movie house","Restaurant","Surprise me"] },
+    { id:"what", label:"What should we do? 🎀", type:"chips", multi:true, other:"anything you’d love to do…", options:["Eat together","Watch a movie","Walk & talk","Arcade / games","Shopping","Take photos","Picnic","Surprise me"] },
+    { id:"food", label:"What food do you like? 🍓", type:"chips", multi:true, other:"your favorite food…", options:["Filipino","Korean","Japanese","Italian","Street food","Sweets & dessert","Coffee / milk tea","Anything!"] },
+    { id:"avoid", label:"Anything you can’t eat or don’t like?", type:"text", ph:"allergies, no-gos…" },
+    { id:"drink", label:"Favorite drink or dessert? 🧋", type:"text", ph:"so I can treat you" },
+    { id:"meet", label:"How should we meet up? 🚗", type:"chips", multi:false, options:["Pick me up at home 🏠","Meet halfway 📍","Meet there","Let’s decide later"] },
+    { id:"note", label:"Anything else I should know or prepare? 💌", type:"area", ph:"anything at all…" }
+  ],
+  submitText: "All done 💗",
+
+  thanksTitle: "Yayyy!! See you then!! 🎉💗",
+  letter: {
+    greeting: "Dear Saii,",
+    message: `Thank you so much for saying yes. It honestly made my whole day, and I’m so happy right now.
+
+I really appreciate you giving me this chance, and I promise to make it comfortable, fun, and something you’ll remember. Whatever you picked, I’ll make sure it happens.
+
+You deserve to be treated sweetly, and I’m so excited to spend that time with you.`,
+    signoff: "Can’t wait,",
+  },
+
+  /* ===== HOW HER ANSWERS REACH YOU =====
+     Put your email below. When she finishes, her answers are emailed to you automatically
+     (uses the free FormSubmit service; it works when this page is hosted on GitHub Pages
+     or Netlify, NOT inside claude.ai). The first time, FormSubmit emails you a link to confirm. */
+  email: "shawnsd06@gmail.com",                    // your email: her answers are sent here automatically
+  phone: "",                    // optional backup: your number, e.g. "+639171234567"
+  formEndpoint: "",             // optional: your own form link (overrides the email above)
+  sendPrompt: "I couldn’t send it automatically 🥺 Please tap one so I can see your answers 💌"
+};
+</script>
+
+<div class="bg" id="bg"></div>
+
+<!-- STEP 1: the question -->
+<section class="step on" id="s1">
+  <h1 id="askT"></h1>
+  <p class="sub" id="askS"></p>
+  <div class="bearwrap" id="gif">
+    <svg id="bear" viewBox="0 0 200 215" aria-hidden="true">
+      <circle cx="46" cy="52" r="24" fill="#e0a37e" stroke="#5a2a3c" stroke-width="3"/><circle cx="46" cy="52" r="12" fill="#f7c0c0"/>
+      <circle cx="154" cy="52" r="24" fill="#e0a37e" stroke="#5a2a3c" stroke-width="3"/><circle cx="154" cy="52" r="12" fill="#f7c0c0"/>
+      <ellipse cx="100" cy="190" rx="50" ry="26" fill="#e0a37e" stroke="#5a2a3c" stroke-width="3"/>
+      <ellipse cx="100" cy="100" rx="64" ry="56" fill="#e8b894" stroke="#5a2a3c" stroke-width="3"/>
+      <ellipse cx="100" cy="122" rx="27" ry="20" fill="#fbe7d4"/>
+      <circle cx="68" cy="116" r="9" fill="#ff9fbd" opacity=".6"/><circle cx="132" cy="116" r="9" fill="#ff9fbd" opacity=".6"/>
+      <circle class="blink" cx="77" cy="96" r="5.5" fill="#5a2a3c"/><circle class="blink" cx="123" cy="96" r="5.5" fill="#5a2a3c"/>
+      <ellipse cx="100" cy="113" rx="7" ry="5" fill="#5a2a3c"/>
+      <path class="happy" d="M87,126 Q100,140 113,126" stroke="#5a2a3c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path class="sadm" d="M88,136 Q100,123 112,136" stroke="#5a2a3c" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path class="tear" d="M78,106 q-6,12 0,16 q6,-4 0,-16Z" fill="#8fd3ff"/>
+      <path class="heart" d="M100,206 C62,180 70,158 100,172 C130,158 138,180 100,206Z" fill="#f06292" stroke="#5a2a3c" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="66" cy="172" rx="14" ry="10" fill="#e8b894" stroke="#5a2a3c" stroke-width="3"/><ellipse cx="134" cy="172" rx="14" ry="10" fill="#e8b894" stroke="#5a2a3c" stroke-width="3"/>
+    </svg>
+  </div>
+  <div class="btns">
+    <button class="btn" id="yes"></button>
+    <button class="btn ghost" id="no"></button>
+  </div>
+</section>
+
+<!-- STEP 2: day, time, details -->
+<section class="step" id="s2">
+  <h2 id="pickT"></h2>
+  <div class="card">
+    <h2 id="monthT" style="font-size:1.8rem"></h2>
+    <div class="cal" id="cal"></div>
+    <p class="sub" id="dayLabel" style="margin:14px 0 0"></p>
+    <p class="rnote" id="recNote"></p>
+    <p class="sub" id="legend" style="font-size:.82rem;margin:12px 0 0"></p>
+  </div>
+  <div class="card" id="timeCard">
+    <label class="q" style="text-align:center">What time? 🕘</label>
+    <div class="chips" id="times"></div>
+  </div>
+  <div id="more">
+    <h2 id="qT"></h2>
+    <div id="qs"></div>
+    <p class="err" id="err"></p>
+    <div class="btns"><button class="btn" id="done"></button></div>
+  </div>
+</section>
+
+<!-- STEP 3: thank you -->
+<section class="step" id="s3">
+  <h1 id="thanksT"></h1>
+  <div class="bearwrap"><svg viewBox="0 0 200 215" aria-hidden="true" id="bear2"></svg></div>
+  <div class="letter"><h3 id="lg"></h3><div id="lb"></div><p id="ls" style="margin:0"></p></div>
+  <div class="card"><div class="sum" id="sum"></div></div>
+  <div class="card" style="text-align:center">
+    <p style="margin:0 0 12px" id="sendP"></p>
+    <div class="btns" style="margin:0;gap:12px" id="sendB"></div>
+    <p class="sub" id="sendS" style="margin:12px 0 0"></p>
+  </div>
+</section>
+
+<!-- STEP 4: if she says no to the very end -->
+<section class="step" id="s4">
+  <h1 id="dT"></h1>
+  <div class="bearwrap"><svg viewBox="0 0 200 215" aria-hidden="true" id="bear3"></svg></div>
+  <div class="letter"><h3 id="dg"></h3><div id="db"></div><p id="ds" style="margin:0"></p></div>
+  <div class="btns"><button class="btn ghost" id="back"></button></div>
+</section>
+
+<!-- popup -->
+<div id="modal"><div class="mbox"><h2 id="mT"></h2><p id="mP"></p>
+  <button class="btn" id="mGo"></button><button class="btn ghost" id="mNo"></button></div></div>
+
+<script>
+const C=CONFIG,$=s=>document.querySelector(s),nm=s=>s.replace(/\{name\}/g,C.herName);
+const show=id=>{document.querySelectorAll('.step').forEach(e=>e.classList.toggle('on',e.id===id));scrollTo(0,0)};
+/* text */
+$('#askT').textContent=nm(C.askTitle);$('#askS').textContent=C.askSub;
+$('#yes').textContent=C.yesText;$('#no').textContent=C.noTexts[0];
+$('#pickT').textContent=C.pickTitle;$('#qT').textContent=C.questionsTitle;$('#done').textContent=C.submitText;
+$('#thanksT').textContent=C.thanksTitle;$('#lg').textContent=nm(C.letter.greeting);
+C.letter.message.trim().split(/\n\s*\n/).forEach(t=>{const p=document.createElement('p');p.textContent=t.trim().replace(/\s*\n\s*/g,' ');$('#lb').appendChild(p)});
+$('#ls').append(C.letter.signoff,document.createElement('br'),C.hisName);
+$('#mT').textContent=C.reassure.title;$('#mP').textContent=C.reassure.text;$('#mGo').textContent=C.reassure.go;$('#mNo').textContent=C.reassure.decline;
+$('#bear2').innerHTML=$('#bear').innerHTML;
+if(C.gifUrl){$('#gif').innerHTML='<img alt="" src="'+C.gifUrl.replace(/"/g,'')+'">'}
+/* floating hearts */
+for(let i=0;i<16;i++){const e=document.createElement('i');e.textContent=['💗','💕','🌸','✨','🎀'][i%5];e.style.cssText=`left:${Math.random()*96}%;font-size:${14+Math.random()*20}px;animation-duration:${9+Math.random()*10}s;animation-delay:-${Math.random()*14}s`;$('#bg').appendChild(e)}
+/* flowers & hearts */
+const rot=(n,f)=>Array.from({length:n},(_,i)=>f(i*360/n)).join('');
+const FL={
+ blossom:c=>`<g fill="${c}" stroke="#fff" stroke-opacity=".7" stroke-width="1.5">${rot(5,a=>`<ellipse cy="-24" rx="17" ry="25" transform="rotate(${a})"/>`)}</g><circle r="9" fill="#ffd36e"/><circle r="4" fill="#f4a43a"/>`,
+ daisy:c=>`<g fill="${c}" stroke="#e8749a" stroke-opacity=".3">${rot(14,a=>`<ellipse cy="-30" rx="7" ry="19" transform="rotate(${a})"/>`)}</g><circle r="12" fill="#ffd36e"/><circle r="6" fill="#f4a43a"/>`,
+ cosmos:c=>`<g fill="${c}" stroke="#fff" stroke-opacity=".6" stroke-width="1.5">${rot(8,a=>`<ellipse cy="-26" rx="13" ry="24" transform="rotate(${a})"/>`)}</g><circle r="8" fill="#ffd36e"/>`,
+ heart:c=>`<path d="M0,30 C-46,0 -30,-36 0,-14 C30,-36 46,0 0,30Z" fill="${c}" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>`
+};
+{const K=Object.keys(FL),P=['#ffb3cc','#ff9fbd','#ffc9da','#ffd6e3','#ffffff','#f48fb1'];let s=5;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;
+ for(let i=0;i<40;i++){const big=i<6,z=big?90+rnd()*40:24+rnd()*40,e=rnd()<.7;
+  const x=big?(i%2?-4+rnd()*8:92+rnd()*8):(e?(rnd()<.5?rnd()*12:86+rnd()*12):rnd()*95),y=big?(i<3?-3+rnd()*6:92+rnd()*8):rnd()*98;
+  const d=document.createElement('div');d.className='flr';
+  d.style.cssText=`left:${x}%;top:${y}%;width:${z}px;height:${z}px;--r:${Math.floor(rnd()*360)}deg;animation-delay:-${(rnd()*6).toFixed(1)}s;animation-duration:${(5+rnd()*4).toFixed(1)}s`;
+  d.innerHTML=`<svg viewBox="-50 -50 100 100">${FL[K[i%4]](P[Math.floor(rnd()*6)])}</svg>`;$('#bg').appendChild(d)}}
+/* the "no" button game */
+let n=0;const yes=$('#yes'),no=$('#no');
+const showDecline=()=>{const D=C.declineLetter;$('#dT').textContent=D.title;$('#dg').textContent=nm(D.greeting);$('#db').innerHTML='';
+  D.message.trim().split(/\n\s*\n/).forEach(t=>{const p=document.createElement('p');p.textContent=t.trim().replace(/\s*\n\s*/g,' ');$('#db').appendChild(p)});
+  $('#ds').textContent='';$('#ds').append(D.signoff,document.createElement('br'),C.hisName);$('#back').textContent=D.back;
+  $('#bear3').innerHTML=$('#bear').innerHTML;$('#bear3').classList.add('sad');show('s4')};
+$('#back').onclick=()=>{n=0;yes.style.fontSize=yes.style.padding='';no.style.transform='';no.textContent=C.noTexts[0];$('#bear').classList.remove('sad');show('s1')};
+no.onclick=()=>{if(n>=C.noTexts.length-1){showDecline();return}n++;no.textContent=C.noTexts[Math.min(n,C.noTexts.length-1)];
+  yes.style.fontSize=Math.min(1.15+n*.6,4.2)+'rem';yes.style.padding=Math.min(14+n*9,70)+'px '+Math.min(34+n*16,90)+'px';
+  no.style.transform='scale('+Math.max(.6,1-n*.07)+')';$('#bear').classList.add('sad')};
+/* popup */
+yes.onclick=()=>{$('#mT').textContent=C.reassure.title;$('#mP').textContent=C.reassure.text;$('#mGo').style.display=$('#mNo').style.display='';$('#mNo').textContent=C.reassure.decline;$('#modal').classList.add('on')};
+$('#mGo').onclick=()=>{$('#modal').classList.remove('on');show('s2');boom(30)};
+$('#mNo').onclick=()=>{if($('#mGo').style.display==='none'){$('#modal').classList.remove('on');return}
+  $('#mT').textContent='🌷';$('#mP').textContent=C.reassure.declineText;$('#mGo').style.display='none';$('#mNo').textContent='Close'};
+/* confetti */
+function boom(k){for(let i=0;i<k;i++){const e=document.createElement('div');e.className='fall';e.textContent=['💗','🎀','✨','🌸','💖'][i%5];e.style.cssText=`left:${Math.random()*100}vw;font-size:${16+Math.random()*16}px;animation-duration:${2+Math.random()*2.5}s;animation-delay:${Math.random()*.7}s`;document.body.appendChild(e);setTimeout(()=>e.remove(),6000)}}
+/* calendar */
+const first=new Date(C.year,C.month,1),dim=new Date(C.year,C.month+1,0).getDate();
+$('#monthT').textContent=first.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+$('#legend').textContent=C.legend;let day=null,time=null;
+['S','M','T','W','T','F','S'].forEach(w=>{const e=document.createElement('div');e.className='wd';e.textContent=w;$('#cal').appendChild(e)});
+for(let i=0;i<first.getDay();i++)$('#cal').appendChild(document.createElement('div'));
+for(let d=1;d<=dim;d++){const b=document.createElement('button');b.className='d'+(C.blocked.includes(d)?' busy':'');b.textContent=d;
+  if(!C.blocked.includes(d)){b.classList.add('ok');if(C.recommended.includes(d))b.classList.add('rec');b.innerHTML=d+'<small>'+new Date(C.year,C.month,d).toLocaleDateString('en-US',{weekday:'short'})+'</small>';
+    b.onclick=()=>{day=d;document.querySelectorAll('.d').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+      $('#dayLabel').textContent=dayStr();$('#recNote').textContent=C.recommended.includes(d)?C.recommendNote:'';unlock()}}
+  $('#cal').appendChild(b)}
+const dayStr=()=>new Date(C.year,C.month,day).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+C.times.forEach(t=>{const b=document.createElement('button');b.className='chip';b.textContent=t;
+  b.onclick=()=>{time=t;document.querySelectorAll('#times .chip').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');unlock()};$('#times').appendChild(b)});
+function unlock(){if(day&&time&&!$('#more').classList.contains('on')){$('#more').classList.add('on');setTimeout(()=>$('#more').scrollIntoView({behavior:'smooth',block:'start'}),150)}}
+/* questions */
+const ans={};
+C.questions.forEach(q=>{ans[q.id]={sel:[],text:''};const c=document.createElement('div');c.className='card';
+  c.innerHTML='<label class="q"></label>';c.firstChild.textContent=q.label;
+  if(q.type==='chips'){const w=document.createElement('div');w.className='chips';
+    q.options.forEach(o=>{const b=document.createElement('button');b.className='chip';b.textContent=o;
+      b.onclick=()=>{const a=ans[q.id].sel,i=a.indexOf(o);
+        if(i>-1){a.splice(i,1);b.classList.remove('sel')}else{if(!q.multi){a.length=0;w.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'))}a.push(o);b.classList.add('sel')}};w.appendChild(b)});
+    c.appendChild(w)}
+  if(q.type==='chips'&&q.other||q.type!=='chips'){const i=document.createElement(q.type==='area'?'textarea':'input');if(i.tagName==='INPUT')i.type='text';
+    i.placeholder=q.other||q.ph||'';i.oninput=()=>ans[q.id].text=i.value.trim();c.appendChild(i)}
+  $('#qs').appendChild(c)});
+/* finish */
+const lines=()=>{const r=['📅 '+dayStr()+', '+time];C.questions.forEach(q=>{const a=ans[q.id],v=[...a.sel,a.text].filter(Boolean).join(', ');if(v)r.push(q.label.replace(/\p{Extended_Pictographic}/gu,'').trim()+' → '+v)});return r};
+$('#done').onclick=async()=>{
+  if(!day||!time){$('#err').textContent='Please pick a day and a time first 💗';return}
+  $('#err').textContent='';const L=lines();
+  $('#sum').innerHTML='';L.forEach(t=>{const p=document.createElement('div');p.textContent=t;$('#sum').appendChild(p)});
+  const msg=C.herName+' said YES to a date! 💗\n\n'+L.join('\n');
+  const ep=C.formEndpoint||(C.email?'https://formsubmit.co/ajax/'+C.email.trim():'');
+  const B=$('#sendB'),S=$('#sendS'),P=$('#sendP');
+  const add=(t,f)=>{const b=document.createElement(typeof f==='string'?'a':'button');b.className='btn';b.style.fontSize='1rem';b.style.textDecoration='none';b.style.display='inline-block';b.textContent=t;if(typeof f==='string')b.href=f;else b.onclick=f;B.appendChild(b)};
+  const fallback=()=>{P.textContent=C.sendPrompt;const ios=/iPhone|iPad/.test(navigator.userAgent);
+    if(C.phone)add('Text it to him 💬','sms:'+C.phone+(ios?'&':'?')+'body='+encodeURIComponent(msg));
+    if(C.email)add('Email it ✉️','mailto:'+C.email+'?subject='+encodeURIComponent('My date answers 💗')+'&body='+encodeURIComponent(msg));
+    if(navigator.share)add('Share it 💌',()=>navigator.share({text:msg}).catch(()=>{}));
+    add('Copy my answers 📋',async()=>{try{await navigator.clipboard.writeText(msg);S.textContent='Copied! Now paste it to him 💗'}catch(e){S.textContent='Please copy it from the card above.'}})};
+  show('s3');boom(50);setTimeout(()=>boom(30),1800);
+  if(!ep){fallback();return}
+  S.textContent='Sending your answers to him… 💌';
+  try{const r=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({_subject:'💗 '+C.herName+' said YES! Date answers',_captcha:'false',name:C.herName,message:msg})});
+    const j=await r.json().catch(()=>({}));
+    if(r.ok&&j.success!=='false'&&j.success!==false){S.textContent='Your answers were sent to him ✓ 💗';return}}catch(e){}
+  S.textContent='';fallback();
+};
+</script>
+</body>
+</html>
